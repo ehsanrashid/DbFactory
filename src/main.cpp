@@ -15,16 +15,16 @@ void demonstrate_database(const std::string& type,
 
         // Use RAII manager for automatic connection management
         {
-            DatabaseManager manager(std::move(db));
+            DatabaseManager dbManager(std::move(db));
 
             // Execute some queries
-            manager->query(
+            dbManager->query(
                 "CREATE TABLE IF NOT EXISTS users (id INT, name VARCHAR(100))");
-            manager->query("INSERT INTO users VALUES (1, 'John Doe')");
-            manager->query("SELECT * FROM users WHERE id = 1");
+            dbManager->query("INSERT INTO users VALUES (1, 'John Doe')");
+            dbManager->query("SELECT * FROM users WHERE id = 1");
 
             std::cout << "Connection status: "
-                      << (manager->connected() ? "Connected" : "Disconnected")
+                      << (dbManager->connected() ? "Connected" : "Disconnected")
                       << "\n";
         }  // DatabaseManager destructor automatically disconnects
 
