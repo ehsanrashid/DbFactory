@@ -61,54 +61,53 @@ int main(int argc, char** argv) {
         std::cout << "Expected error: " << e.what() << "\n";
     }
 
-    // Example of registering a new database type at runtime
-    std::cout << "\n=== Registering Custom Database ===\n";
-    
-    DatabaseFactory::register_database(
-        "redis",
-        [](const DatabaseConfig& config) -> std::unique_ptr<IDatabase> {
-            class RedisDatabase : public IDatabase {
-               public:
-                RedisDatabase(const std::string& host, int port)
-                    : _host(host), _port(port), _connected(false) {}
+    // // Example of registering a new database type at runtime
+    // std::cout << "\n=== Registering Custom Database ===\n";
+    // DatabaseFactory::register_database(
+    //     "redis",
+    //     [](const DatabaseConfig& config) -> std::unique_ptr<IDatabase> {
+    //         class RedisDatabase : public IDatabase {
+    //            public:
+    //             RedisDatabase(const std::string& host, int port)
+    //                 : _host(host), _port(port), _connected(false) {}
 
-                std::string get_connection_info() const noexcept override {
-                    return "Redis at " + _host + ":" + std::to_string(_port);
-                }
-                bool connected() const noexcept override { return _connected; }
+    //             std::string get_connection_info() const noexcept override {
+    //                 return "Redis at " + _host + ":" + std::to_string(_port);
+    //             }
+    //             bool connected() const noexcept override { return _connected; }
 
-                void connect() noexcept override {
-                    std::cout << "[Redis] Connecting to " << _host << ":"
-                              << _port << "\n";
-                    _connected = true;
-                }
-                void disconnect() noexcept override {
-                    if (_connected) {
-                        std::cout << "[Redis] Disconnecting\n";
-                        _connected = false;
-                    }
-                }
+    //             void connect() noexcept override {
+    //                 std::cout << "[Redis] Connecting to " << _host << ":"
+    //                           << _port << "\n";
+    //                 _connected = true;
+    //             }
+    //             void disconnect() noexcept override {
+    //                 if (_connected) {
+    //                     std::cout << "[Redis] Disconnecting\n";
+    //                     _connected = false;
+    //                 }
+    //             }
 
-                void query(const std::string& sql) override {
-                    if (!_connected) {
-                        throw std::runtime_error(
-                            "[Redis] Database not connected");
-                    }
-                    std::cout << "[Redis] Executing query: " << sql << "\n";
-                    // Simulate query execution
-                    std::cout << "[Redis] Query executed successfully\n";
-                }
+    //             void query(const std::string& sql) override {
+    //                 if (!_connected) {
+    //                     throw std::runtime_error(
+    //                         "[Redis] Database not connected");
+    //                 }
+    //                 std::cout << "[Redis] Executing query: " << sql << "\n";
+    //                 // Simulate query execution
+    //                 std::cout << "[Redis] Query executed successfully\n";
+    //             }
 
-               private:
-                std::string _host;
-                int _port;
-                bool _connected;
-            };
+    //            private:
+    //             std::string _host;
+    //             int _port;
+    //             bool _connected;
+    //         };
 
-            return std::make_unique<RedisDatabase>(
-                config.host.empty() ? "localhost" : config.host,
-                config.port == 0 ? 6379 : config.port);
-        });
+    //         return std::make_unique<RedisDatabase>(
+    //             config.host.empty() ? "localhost" : config.host,
+    //             config.port == 0 ? 6379 : config.port);
+    //     });
 
     // Test the newly registered database
     DatabaseConfig redisConfig("localhost", 6379);

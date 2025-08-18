@@ -4,6 +4,7 @@
 
 #include "MySQLDatabase.h"
 #include "PostgreDatabase.h"
+#include "RedisDatabase.h"
 #include "SQLiteDatabase.h"
 
 // Static member definition
@@ -49,6 +50,14 @@ void DatabaseFactory::initialize() noexcept {
         [](const DatabaseConfig& config) -> std::unique_ptr<IDatabase> {
             return std::make_unique<SQLiteDatabase>(
                 config.filepath.empty() ? ":memory:" : config.filepath);
+        });
+
+    register_database(
+        "redis",
+        [](const DatabaseConfig& config) -> std::unique_ptr<IDatabase> {
+            return std::make_unique<RedisDatabase>(
+                config.host.empty() ? "localhost" : config.host,
+                config.port == 0 ? 6379 : config.port);
         });
 }
 
