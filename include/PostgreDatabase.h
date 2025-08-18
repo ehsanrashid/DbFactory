@@ -5,6 +5,9 @@
 // PostgreSQL Database implementation
 class PostgreDatabase : public IDatabase {
    public:
+    PostgreDatabase(const std::string& host, int port,
+                    const std::string& database, const std::string& username,
+                    const std::string& password) noexcept;
     PostgreDatabase(const std::string& host = "localhost", int port = 5432,
                     const std::string& database = "postgres") noexcept;
 
@@ -22,5 +25,7 @@ class PostgreDatabase : public IDatabase {
     std::string _host;
     int _port;
     std::string _database;
+    std::string _username;
+    std::string _password;
     bool _connected;
 };

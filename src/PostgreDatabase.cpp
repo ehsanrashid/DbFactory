@@ -4,8 +4,22 @@
 #include <stdexcept>
 
 PostgreDatabase::PostgreDatabase(const std::string& host, int port,
+                                 const std::string& database,
+                                 const std::string& username,
+                                 const std::string& password) noexcept
+    : _host(host),
+      _port(port == 0 ? 5432 : port),
+      _database(database),
+      _username(username),
+      _password(password),
+      _connected(false) {}
+
+PostgreDatabase::PostgreDatabase(const std::string& host, int port,
                                  const std::string& database) noexcept
-    : _host(host), _port(port == 0 ? 5432 : port), _database(database), _connected(false) {}
+    : _host(host),
+      _port(port == 0 ? 5432 : port),
+      _database(database),
+      _connected(false) {}
 
 std::string PostgreDatabase::connection_info() const noexcept {
     return "Postgre Database at " + _host + ":" + std::to_string(_port) + "/" +
