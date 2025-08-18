@@ -36,7 +36,7 @@ class DatabaseFactory {
     static bool supported(const std::string& type) noexcept;
 
     // Get list of available database types
-    static std::vector<std::string> get_available_types() noexcept;
+    static std::vector<std::string> available_types() noexcept;
 
     // Create database instance
     static std::unique_ptr<IDatabase> create(

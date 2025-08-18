@@ -67,20 +67,19 @@ bool DatabaseFactory::supported(const std::string& type) noexcept {
 }
 
 // Get list of available database types
-std::vector<std::string> DatabaseFactory::get_available_types() noexcept {
+std::vector<std::string> DatabaseFactory::available_types() noexcept {
     std::vector<std::string> types;
-    for (const auto& pair : creators) {
-        types.push_back(pair.first);
-    }
+    for (const auto& pair : creators) types.push_back(pair.first);
+
     return types;
 }
 
 // Create database instance
 std::unique_ptr<IDatabase> DatabaseFactory::create(
     const std::string& type, const DatabaseConfig& config) {
-    auto it = creators.find(type);
-    if (it == creators.end()) {
+    auto itr = creators.find(type);
+    if (itr == creators.end())
         throw std::runtime_error("Unknown database type: " + type);
-    }
-    return it->second(config);
+
+    return itr->second(config);
 }

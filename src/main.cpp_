@@ -40,7 +40,7 @@ int main(int argc, char** argv) {
     DatabaseFactory::initialize();
 
     std::cout << "Available database types:\n";
-    for (const auto& type : DatabaseFactory::get_available_types()) {
+    for (const auto& type : DatabaseFactory::available_types()) {
         std::cout << "- " << type << "\n";
     }
 
