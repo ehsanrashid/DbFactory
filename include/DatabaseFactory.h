@@ -17,6 +17,13 @@ class DatabaseFactory {
 
     static std::unordered_map<std::string, Creator> creators;
 
+    DatabaseFactory() noexcept = delete;
+    ~DatabaseFactory() noexcept = delete;
+    DatabaseFactory(const DatabaseFactory&) noexcept = delete;
+    DatabaseFactory(DatabaseFactory&&) noexcept = delete;
+    DatabaseFactory& operator=(const DatabaseFactory&) noexcept = delete;
+    DatabaseFactory& operator=(DatabaseFactory&&) noexcept = delete;
+
    public:
     // Register a database type with its creator function
     static void register_database(const std::string& type,

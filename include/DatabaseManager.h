@@ -7,17 +7,17 @@
 // RAII Database Connection Manager
 class DatabaseManager final {
    public:
-    DatabaseManager(std::unique_ptr<IDatabase> database);
-
-    ~DatabaseManager();
+    DatabaseManager(std::unique_ptr<IDatabase> database) noexcept;
 
     // Disable copy constructor and assignment
-    DatabaseManager(const DatabaseManager&) = delete;
-    DatabaseManager& operator=(const DatabaseManager&) = delete;
+    DatabaseManager(const DatabaseManager&) noexcept = delete;
+    DatabaseManager& operator=(const DatabaseManager&) noexcept = delete;
 
     // Enable move constructor and assignment
-    DatabaseManager(DatabaseManager&& other) noexcept;
-    DatabaseManager& operator=(DatabaseManager&& other) noexcept;
+    DatabaseManager(DatabaseManager&& dbManager) noexcept;
+    DatabaseManager& operator=(DatabaseManager&& dbManager) noexcept;
+
+    ~DatabaseManager() noexcept;
 
     IDatabase* operator->() const noexcept;
     IDatabase& operator*() const noexcept;
@@ -26,5 +26,8 @@ class DatabaseManager final {
     bool valid() const noexcept;
 
    private:
+    void connect() noexcept;
+    void disconnect() noexcept;
+
     std::unique_ptr<IDatabase> _db;
 };
