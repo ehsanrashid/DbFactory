@@ -10,11 +10,11 @@ class RedisDatabase : public IDatabase {
 
     bool connected() const noexcept override;
 
-    void connect() noexcept override;
+    void connect() override;
 
-    void disconnect() noexcept override;
+    void disconnect() override;
 
-    void query(const std::string& sql) override;
+    IResult exec(const std::string& sql) override;
 
    private:
     std::string _host;

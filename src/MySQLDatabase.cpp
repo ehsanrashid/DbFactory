@@ -12,7 +12,7 @@ std::string MySQLDatabase::connection_info() const noexcept {
 
 bool MySQLDatabase::connected() const noexcept { return _connected; }
 
-void MySQLDatabase::connect() noexcept {
+void MySQLDatabase::connect() {
     if (_connected) {
         std::cout << "[MySQL] Already connected\n";
         return;
@@ -23,7 +23,7 @@ void MySQLDatabase::connect() noexcept {
     std::cout << "[MySQL] Successfully connected\n";
 }
 
-void MySQLDatabase::disconnect() noexcept {
+void MySQLDatabase::disconnect() {
     if (!_connected) {
         std::cout << "[MySQL] Already disconnected\n";
         return;
@@ -33,11 +33,12 @@ void MySQLDatabase::disconnect() noexcept {
     std::cout << "[MySQL] Successfully disconnected\n";
 }
 
-void MySQLDatabase::query(const std::string& sql) {
+IResult MySQLDatabase::exec(const std::string& sql) {
     if (!_connected) {
         throw std::runtime_error("[MySQL] Database not connected");
     }
     std::cout << "[MySQL] Executing query: " << sql << "\n";
     // Simulate query execution
     std::cout << "[MySQL] Query executed successfully\n";
+    return IResult{};
 }

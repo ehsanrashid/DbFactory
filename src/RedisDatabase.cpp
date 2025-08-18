@@ -12,23 +12,24 @@ std::string RedisDatabase::connection_info() const noexcept {
 
 bool RedisDatabase::connected() const noexcept { return _connected; }
 
-void RedisDatabase::connect() noexcept {
+void RedisDatabase::connect() {
     std::cout << "[Redis] Connecting to " << _host << ":" << _port << "\n";
     _connected = true;
 }
 
-void RedisDatabase::disconnect() noexcept {
+void RedisDatabase::disconnect() {
     if (_connected) {
         std::cout << "[Redis] Disconnecting\n";
         _connected = false;
     }
 }
 
-void RedisDatabase::query(const std::string& sql) {
+IResult RedisDatabase::exec(const std::string& sql) {
     if (!_connected) {
         throw std::runtime_error("[Redis] Database not connected");
     }
     std::cout << "[Redis] Executing query: " << sql << "\n";
     // Simulate query execution
     std::cout << "[Redis] Query executed successfully\n";
+    return IResult{};
 }

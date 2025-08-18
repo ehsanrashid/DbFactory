@@ -18,10 +18,10 @@ void demonstrate_database(const std::string& type,
             DatabaseManager dbManager(std::move(db));
 
             // Execute some queries
-            dbManager->query(
+            dbManager->exec(
                 "CREATE TABLE IF NOT EXISTS users (id INT, name VARCHAR(100))");
-            dbManager->query("INSERT INTO users VALUES (1, 'John Doe')");
-            dbManager->query("SELECT * FROM users WHERE id = 1");
+            dbManager->exec("INSERT INTO users VALUES (1, 'John Doe')");
+            dbManager->exec("SELECT * FROM users WHERE id = 1");
 
             std::cout << "Connection status: "
                       << (dbManager->connected() ? "Connected" : "Disconnected")
@@ -76,19 +76,19 @@ int main(int argc, char** argv) {
     //             }
     //             bool connected() const noexcept override { return _connected; }
 
-    //             void connect() noexcept override {
+    //             void connect() override {
     //                 std::cout << "[Redis] Connecting to " << _host << ":"
     //                           << _port << "\n";
     //                 _connected = true;
     //             }
-    //             void disconnect() noexcept override {
+    //             void disconnect() override {
     //                 if (_connected) {
     //                     std::cout << "[Redis] Disconnecting\n";
     //                     _connected = false;
     //                 }
     //             }
 
-    //             void query(const std::string& sql) override {
+    //             void exec(const std::string& sql) override {
     //                 if (!_connected) {
     //                     throw std::runtime_error(
     //                         "[Redis] Database not connected");
