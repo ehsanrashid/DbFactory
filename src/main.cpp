@@ -1,0 +1,118 @@
+#include <iostream>
+
+#include "DatabaseFactory.h"
+#include "DatabaseManager.h"
+
+// Utility function to demonstrate usage
+void demonstrate_database(const std::string& type,
+                         const DatabaseConfig& config = DatabaseConfig{}) {
+    try {
+        std::cout << "\n=== Testing " << type << " Database ===\n";
+
+        // Create database using factory
+        auto db = DatabaseFactory::create(type, config);
+        std::cout << "Created: " << db->get_connection_info() << "\n";
+
+        // Use RAII manager for automatic connection management
+        {
+            DatabaseManager manager(std::move(db));
+
+            // Execute some queries
+            manager->query(
+                "CREATE TABLE IF NOT EXISTS users (id INT, name VARCHAR(100))");
+            manager->query("INSERT INTO users VALUES (1, 'John Doe')");
+            manager->query("SELECT * FROM users WHERE id = 1");
+
+            std::cout << "Connection status: "
+                      << (manager->connected() ? "Connected" : "Disconnected")
+                      << "\n";
+        }  // DatabaseManager destructor automatically disconnects
+
+        std::cout << "Database manager destroyed, connection closed\n";
+
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << "\n";
+    }
+}
+
+int main(int argc, char** argv) {
+    // Initialize the factory with default database types
+    DatabaseFactory::initialize();
+
+    std::cout << "Available database types:\n";
+    for (const auto& type : DatabaseFactory::get_available_types()) {
+        std::cout << "- " << type << "\n";
+    }
+
+    // Test different database configurations
+    demonstrate_database("mysql");
+
+    DatabaseConfig pgConfig("localhost", 5432, "myapp_db");
+    demonstrate_database("postgresql", pgConfig);
+
+    DatabaseConfig sqliteConfig("./myapp.db");
+    demonstrate_database("sqlite", sqliteConfig);
+
+    // Test error handling
+    std::cout << "\n=== Testing Error Handling ===\n";
+    try {
+        auto db = DatabaseFactory::create("oracle");  // Unsupported type
+    } catch (const std::exception& e) {
+        std::cout << "Expected error: " << e.what() << "\n";
+    }
+
+    // Example of registering a new database type at runtime
+    std::cout << "\n=== Registering Custom Database ===\n";
+    
+    DatabaseFactory::register_database(
+        "redis",
+        [](const DatabaseConfig& config) -> std::unique_ptr<IDatabase> {
+            class RedisDatabase : public IDatabase {
+               public:
+                RedisDatabase(const std::string& host, int port)
+                    : _host(host), _port(port), _connected(false) {}
+
+                std::string get_connection_info() const noexcept override {
+                    return "Redis at " + _host + ":" + std::to_string(_port);
+                }
+                bool connected() const noexcept override { return _connected; }
+
+                void connect() noexcept override {
+                    std::cout << "[Redis] Connecting to " << _host << ":"
+                              << _port << "\n";
+                    _connected = true;
+                }
+                void disconnect() noexcept override {
+                    if (_connected) {
+                        std::cout << "[Redis] Disconnecting\n";
+                        _connected = false;
+                    }
+                }
+
+                void query(const std::string& sql) override {
+                    if (!_connected) {
+                        throw std::runtime_error(
+                            "[Redis] Database not connected");
+                    }
+                    std::cout << "[Redis] Executing query: " << sql << "\n";
+                    // Simulate query execution
+                    std::cout << "[Redis] Query executed successfully\n";
+                }
+
+               private:
+                std::string _host;
+                int _port;
+                bool _connected;
+            };
+
+            return std::make_unique<RedisDatabase>(
+                config.host.empty() ? "localhost" : config.host,
+                config.port == 0 ? 6379 : config.port);
+        });
+
+    // Test the newly registered database
+    DatabaseConfig redisConfig("localhost", 6379);
+    demonstrate_database("redis", redisConfig);
+
+    return 0;
+}
