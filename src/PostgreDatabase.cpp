@@ -7,7 +7,7 @@ PostgreDatabase::PostgreDatabase(const std::string& host, int port,
                                  const std::string& database) noexcept
     : _host(host), _port(port == 0 ? 5432 : port), _database(database), _connected(false) {}
 
-std::string PostgreDatabase::get_connection_info() const noexcept {
+std::string PostgreDatabase::connection_info() const noexcept {
     return "Postgre Database at " + _host + ":" + std::to_string(_port) + "/" +
            _database;
 }

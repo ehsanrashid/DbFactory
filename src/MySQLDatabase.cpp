@@ -6,7 +6,7 @@
 MySQLDatabase::MySQLDatabase(const std::string& host, int port) noexcept
     : _host(host), _port(port == 0 ? 3306 : port), _connected(false) {}
 
-std::string MySQLDatabase::get_connection_info() const noexcept {
+std::string MySQLDatabase::connection_info() const noexcept {
     return "MySQL Database at " + _host + ":" + std::to_string(_port);
 }
 

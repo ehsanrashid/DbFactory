@@ -8,7 +8,7 @@ class PostgreDatabase : public IDatabase {
     PostgreDatabase(const std::string& host = "localhost", int port = 5432,
                     const std::string& database = "postgres") noexcept;
 
-    std::string get_connection_info() const noexcept override;
+    std::string connection_info() const noexcept override;
 
     bool connected() const noexcept override;
 

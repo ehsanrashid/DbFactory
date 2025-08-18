@@ -8,7 +8,7 @@ class MySQLDatabase : public IDatabase {
     MySQLDatabase(const std::string& host = "localhost",
                   int port = 3306) noexcept;
 
-    std::string get_connection_info() const noexcept override;
+    std::string connection_info() const noexcept override;
 
     bool connected() const noexcept override;
 

@@ -6,7 +6,7 @@
 SQLiteDatabase::SQLiteDatabase(const std::string& filepath) noexcept
     : _filepath(filepath), _connected(false) {}
 
-std::string SQLiteDatabase::get_connection_info() const noexcept {
+std::string SQLiteDatabase::connection_info() const noexcept {
     return "SQLite Database at " + _filepath;
 }
 

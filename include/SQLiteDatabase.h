@@ -7,7 +7,7 @@ class SQLiteDatabase : public IDatabase {
    public:
     SQLiteDatabase(const std::string& filepath = ":memory:") noexcept;
 
-    std::string get_connection_info() const noexcept override;
+    std::string connection_info() const noexcept override;
 
     bool connected() const noexcept override;
 

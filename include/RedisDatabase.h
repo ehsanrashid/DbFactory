@@ -6,7 +6,7 @@ class RedisDatabase : public IDatabase {
    public:
     RedisDatabase(const std::string& host, int port);
 
-    std::string get_connection_info() const noexcept override;
+    std::string connection_info() const noexcept override;
 
     bool connected() const noexcept override;
 

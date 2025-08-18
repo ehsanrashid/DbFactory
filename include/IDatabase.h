@@ -7,7 +7,7 @@ class IDatabase {
    public:
     virtual ~IDatabase() = default;
 
-    virtual std::string get_connection_info() const noexcept = 0;
+    virtual std::string connection_info() const noexcept = 0;
     virtual bool connected() const noexcept = 0;
 
     virtual void connect() noexcept = 0;

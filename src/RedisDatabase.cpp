@@ -6,7 +6,7 @@
 RedisDatabase::RedisDatabase(const std::string& host, int port)
     : _host(host), _port(port), _connected(false) {}
 
-std::string RedisDatabase::get_connection_info() const noexcept {
+std::string RedisDatabase::connection_info() const noexcept {
     return "Redis at " + _host + ":" + std::to_string(_port);
 }
 
