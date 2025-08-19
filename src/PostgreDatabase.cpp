@@ -134,9 +134,8 @@ std::vector<T> PostgreResult::to_vector(
     std::function<T(const PostgreRow&)> converter) const {
     std::vector<T> vec;
     vec.reserve(size());
-    for (const auto& row : *this) {
-        vec.push_back(converter(row));
-    }
+    for (const auto& row : *this) vec.push_back(converter(row));
+
     return vec;
 }
 
@@ -166,16 +165,26 @@ PostgreResult PostgreTransaction::exec(const std::string& sql) {
 
 // Execute parameterized query
 template <typename... Args>
-PostgreResult PostgreTransaction::exec_params(const std::string& sql,
-                                              Args&&... args) {
+PostgreResult PostgreTransaction::exec_params(
+    const std::string& sql, const std::vector<std::any>& args) {
+    if (args.size() != sizeof...(Args))
+        throw DatabaseError("Argument count mismatch");
+
     try {
-        return PostgreResult(
-            _txn->exec_params(sql, std::forward<Args>(args)...));
+        return PostgreResult(_txn->exec_params(sql, std::any_cast<Args>(args[0])...));
     } catch (const pqxx::sql_error& e) {
         throw QueryError(e.what());
     } catch (const std::exception& e) {
         throw DatabaseError(e.what());
     }
+}
+
+// Execute parameterized query
+template <typename... Args>
+PostgreResult PostgreTransaction::exec_params(const std::string& sql,
+                                              Args&&... args) {
+    std::vector<std::any> packed{std::forward<Args>(args)...};
+    return exec_params(sql, packed);
 }
 
 // Execute prepared statement
@@ -367,7 +376,8 @@ std::vector<std::string> PostgreDatabase::get_columns(
     auto pgResult = dynamic_cast<PostgreResult*>(result.get());
 
     std::vector<std::string> columns;
-    for (const auto& row : *pgResult) columns.push_back(row.get<std::string>(0));
+    for (const auto& row : *pgResult)
+        columns.push_back(row.get<std::string>(0));
 
     return columns;
 }

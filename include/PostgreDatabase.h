@@ -112,6 +112,11 @@ class PostgreTransaction {
 
     // Execute parameterized query
     template <typename... Args>
+    PostgreResult exec_params(const std::string& sql,
+                              const std::vector<std::any>& args);
+
+    // Execute parameterized query
+    template <typename... Args>
     PostgreResult exec_params(const std::string& sql, Args&&... args);
 
     // Execute prepared statement

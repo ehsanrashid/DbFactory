@@ -18,7 +18,7 @@ file(GLOB SOURCE_FILES "src/*.cpp")
 file(GLOB HEADERS "include/*.h")
 
 # Create a library
-#add_executable(${PROJECT_NAME} ${SOURCES})
+#add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 add_library(${PROJECT_NAME} ${SOURCE_FILES})
 
 # Include headers
@@ -28,8 +28,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 )
 
 # Link libraries
-target_link_libraries(${PROJECT_NAME} 
-    PRIVATE 
+target_link_libraries(${PROJECT_NAME} PRIVATE 
     ${PQXX_LIBRARIES}
 )
 
