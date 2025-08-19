@@ -33,7 +33,8 @@ void DatabaseFactory::initialize() noexcept {
             return std::make_unique<PostgreDatabase>(
                 config.host.empty() ? "localhost" : config.host,
                 config.port == 0 ? 5432 : config.port,
-                config.database.empty() ? "postgres" : config.database);
+                config.database.empty() ? "postgres" : config.database,
+                config.username, config.password);
         });
 
     register_database(
@@ -42,7 +43,8 @@ void DatabaseFactory::initialize() noexcept {
             return std::make_unique<PostgreDatabase>(
                 config.host.empty() ? "localhost" : config.host,
                 config.port == 0 ? 5432 : config.port,
-                config.database.empty() ? "postgres" : config.database);
+                config.database.empty() ? "postgres" : config.database,
+                config.username, config.password);
         });
 
     register_database(
