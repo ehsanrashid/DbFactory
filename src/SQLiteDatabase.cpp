@@ -42,3 +42,8 @@ IResult SQLiteDatabase::exec(const std::string& sql) {
     std::cout << "[SQLite] Query executed successfully\n";
     return IResult{};
 }
+
+IResult SQLiteDatabase::exec_params(const std::string& sql,
+                                    const std::vector<std::any>& args) {
+    return IResult();
+}

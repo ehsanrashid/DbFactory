@@ -33,3 +33,8 @@ IResult RedisDatabase::exec(const std::string& sql) {
     std::cout << "[Redis] Query executed successfully\n";
     return IResult{};
 }
+
+IResult RedisDatabase::exec_params(const std::string& sql,
+                                   const std::vector<std::any>& args) {
+    return IResult();
+}

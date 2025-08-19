@@ -317,19 +317,80 @@ IResult PostgreDatabase::exec(const std::string& sql) {
 }
 
 // Execute parameterized query without transaction
-template <typename... Args>
-IResult PostgreDatabase::exec_params(const std::string& sql, Args&&... args) {
+IResult PostgreDatabase::exec_params(const std::string& sql,
+                                     const std::vector<std::any>& args) {
     if (!connected()) {
         throw ConnectionError("[Postgre] Database not connected");
     }
 
     try {
         auto txn = begin_transaction();
-        auto result = txn.exec_params(sql, std::forward<Args>(args)...);
+        // txn.exec_params must also support vector<any>
+        auto result = txn.exec_params(sql, args);
         txn.commit();
         return result;
     } catch (const std::exception& e) {
         throw QueryError(e.what());
     }
-    return IResult{};
+}
+
+// Execute parameterized query without transaction
+template <typename... Args>
+IResult PostgreDatabase::exec_params(const std::string& sql, Args&&... args) {
+    std::vector<std::any> packed{std::forward<Args>(args)...};
+    return exec_params(sql, packed);
+}
+
+// Check if table exists
+bool PostgreDatabase::table_exists(const std::string& tableName) {
+    auto result = exec_params(
+        "SELECT EXISTS (SELECT FROM information_schema.tables WHERE "
+        "table_name "
+        "= $1)",
+        tableName);
+
+    auto pgResult = static_cast<PostgreResult&>(result);
+    return pgResult.front().get<bool>(0);
+}
+
+// Get table column names
+std::vector<std::string> PostgreDatabase::get_columns(
+    const std::string& tableName) {
+    auto result = exec_params(
+        "SELECT column_name FROM information_schema.columns WHERE "
+        "table_name = "
+        "$1 ORDER BY ordinal_position",
+        tableName);
+
+    auto pgResult = static_cast<PostgreResult&>(result);
+
+    std::vector<std::string> columns;
+    for (const auto& row : pgResult) columns.push_back(row.get<std::string>(0));
+
+    return columns;
+}
+
+// Simple insert helper
+template <typename... Args>
+void PostgreDatabase::insert(const std::string& table,
+                             const std::vector<std::string>& columns,
+                             Args&&... values) {
+    if (sizeof...(values) != columns.size())
+        throw std::invalid_argument(
+            "Number of values doesn't match number of columns");
+
+    std::ostringstream oss;
+    oss << "INSERT INTO " << table << " (";
+    for (std::size_t i = 0; i < columns.size(); ++i) {
+        if (i > 0) oss << ", ";
+        oss << columns[i];
+    }
+    oss << ") VALUES (";
+    for (std::size_t i = 0; i < columns.size(); ++i) {
+        if (i > 0) oss << ", ";
+        oss << "$" << (i + 1);
+    }
+    oss << ")";
+
+    exec_params(oss.str(), std::forward<Args>(values)...);
 }

@@ -1,6 +1,8 @@
 #pragma once
 
+#include <any>
 #include <string>
+#include <vector>
 
 class IResult {};
 
@@ -12,11 +14,14 @@ class IDatabase {
     virtual std::string connection_info() const noexcept = 0;
     virtual bool connected() const noexcept = 0;
 
+    // Opem connection
     virtual void connect() = 0;
+    // Close connection
     virtual void disconnect() = 0;
 
+    // Execute query without transaction (auto-commit)
     virtual IResult exec(const std::string& sql) = 0;
-
-    template <typename... Args>
-    IResult exec_params(const std::string& sql, Args&&... args);
+    // Execute parameterized query without transaction
+    virtual IResult exec_params(const std::string& sql,
+                                const std::vector<std::any>& args) = 0;
 };

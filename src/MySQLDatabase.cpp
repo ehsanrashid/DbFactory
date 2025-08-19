@@ -42,3 +42,8 @@ IResult MySQLDatabase::exec(const std::string& sql) {
     std::cout << "[MySQL] Query executed successfully\n";
     return IResult{};
 }
+
+IResult MySQLDatabase::exec_params(const std::string& sql,
+                                   const std::vector<std::any>& args) {
+    return IResult();
+}

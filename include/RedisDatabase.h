@@ -16,6 +16,8 @@ class RedisDatabase : public IDatabase {
 
     IResult exec(const std::string& sql) override;
 
+    IResult exec_params(const std::string& sql,
+                        const std::vector<std::any>& args) override;
    private:
     std::string _host;
     int _port;

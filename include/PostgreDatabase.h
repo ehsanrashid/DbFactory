@@ -166,8 +166,25 @@ class PostgreDatabase : public IDatabase {
     IResult exec(const std::string& sql) override;
 
     // Execute parameterized query without transaction
+    IResult exec_params(const std::string& sql,
+                        const std::vector<std::any>& args) override;
+
+    // Execute parameterized query without transaction
     template <typename... Args>
     IResult exec_params(const std::string& sql, Args&&... args);
+
+    // Utility methods for common operations
+
+    // Check if table exists
+    bool table_exists(const std::string& tableName);
+
+    // Get table column names
+    std::vector<std::string> get_columns(const std::string& tableName);
+
+    // Simple insert helper
+    template <typename... Args>
+    void insert(const std::string& table,
+                const std::vector<std::string>& columns, Args&&... values);
 
    private:
     std::string _connectionString;
