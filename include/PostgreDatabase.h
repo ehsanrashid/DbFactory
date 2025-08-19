@@ -163,15 +163,16 @@ class PostgreDatabase : public IDatabase {
     PostgreTransaction begin_transaction();
 
     // Execute query without transaction (auto-commit)
-    IResult exec(const std::string& sql) override;
+    std::unique_ptr<IResult> exec(const std::string& sql) override;
 
     // Execute parameterized query without transaction
-    IResult exec_params(const std::string& sql,
-                        const std::vector<std::any>& args) override;
+    std::unique_ptr<IResult> exec_params(
+        const std::string& sql, const std::vector<std::any>& args) override;
 
     // Execute parameterized query without transaction
     template <typename... Args>
-    IResult exec_params(const std::string& sql, Args&&... args);
+    std::unique_ptr<IResult> exec_params(const std::string& sql,
+                                         Args&&... args);
 
     // Utility methods for common operations
 

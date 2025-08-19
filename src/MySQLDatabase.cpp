@@ -33,17 +33,17 @@ void MySQLDatabase::disconnect() {
     std::cout << "[MySQL] Successfully disconnected\n";
 }
 
-IResult MySQLDatabase::exec(const std::string& sql) {
+std::unique_ptr<IResult> MySQLDatabase::exec(const std::string& sql) {
     if (!_connected) {
         throw std::runtime_error("[MySQL] Database not connected");
     }
     std::cout << "[MySQL] Executing query: " << sql << "\n";
     // Simulate query execution
     std::cout << "[MySQL] Query executed successfully\n";
-    return IResult{};
+    return nullptr;
 }
 
-IResult MySQLDatabase::exec_params(const std::string& sql,
-                                   const std::vector<std::any>& args) {
-    return IResult();
+std::unique_ptr<IResult> MySQLDatabase::exec_params(
+    const std::string& sql, const std::vector<std::any>& args) {
+    return nullptr;
 }

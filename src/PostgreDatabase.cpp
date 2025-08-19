@@ -300,7 +300,7 @@ PostgreTransaction PostgreDatabase::begin_transaction() {
 }
 
 // Execute query without transaction (auto-commit)
-IResult PostgreDatabase::exec(const std::string& sql) {
+std::unique_ptr<IResult> PostgreDatabase::exec(const std::string& sql) {
     if (!connected()) {
         throw ConnectionError("[Postgre] Database not connected");
     }
@@ -309,16 +309,16 @@ IResult PostgreDatabase::exec(const std::string& sql) {
         auto txn = begin_transaction();
         auto result = txn.exec(sql);
         txn.commit();
-        return result;
+        return std::make_unique<PostgreResult>(result);
     } catch (const std::exception& e) {
         throw QueryError(e.what());
     }
-    return IResult{};
+    return nullptr;
 }
 
 // Execute parameterized query without transaction
-IResult PostgreDatabase::exec_params(const std::string& sql,
-                                     const std::vector<std::any>& args) {
+std::unique_ptr<IResult> PostgreDatabase::exec_params(
+    const std::string& sql, const std::vector<std::any>& args) {
     if (!connected()) {
         throw ConnectionError("[Postgre] Database not connected");
     }
@@ -328,15 +328,17 @@ IResult PostgreDatabase::exec_params(const std::string& sql,
         // txn.exec_params must also support vector<any>
         auto result = txn.exec_params(sql, args);
         txn.commit();
-        return result;
+        return std::make_unique<PostgreResult>(result);
     } catch (const std::exception& e) {
         throw QueryError(e.what());
     }
+    return nullptr;
 }
 
 // Execute parameterized query without transaction
 template <typename... Args>
-IResult PostgreDatabase::exec_params(const std::string& sql, Args&&... args) {
+std::unique_ptr<IResult> PostgreDatabase::exec_params(const std::string& sql,
+                                                      Args&&... args) {
     std::vector<std::any> packed{std::forward<Args>(args)...};
     return exec_params(sql, packed);
 }
@@ -349,8 +351,8 @@ bool PostgreDatabase::table_exists(const std::string& tableName) {
         "= $1)",
         tableName);
 
-    auto pgResult = static_cast<PostgreResult&>(result);
-    return pgResult.front().get<bool>(0);
+    auto pgResult = dynamic_cast<PostgreResult*>(result.get());
+    return pgResult->front().get<bool>(0);
 }
 
 // Get table column names
@@ -362,10 +364,10 @@ std::vector<std::string> PostgreDatabase::get_columns(
         "$1 ORDER BY ordinal_position",
         tableName);
 
-    auto pgResult = static_cast<PostgreResult&>(result);
+    auto pgResult = dynamic_cast<PostgreResult*>(result.get());
 
     std::vector<std::string> columns;
-    for (const auto& row : pgResult) columns.push_back(row.get<std::string>(0));
+    for (const auto& row : *pgResult) columns.push_back(row.get<std::string>(0));
 
     return columns;
 }

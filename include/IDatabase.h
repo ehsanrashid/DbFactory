@@ -1,10 +1,14 @@
 #pragma once
 
 #include <any>
+#include <memory>
 #include <string>
 #include <vector>
 
-class IResult {};
+class IResult {
+   public:
+    virtual ~IResult() = default;
+};
 
 // Database interface
 class IDatabase {
@@ -20,8 +24,8 @@ class IDatabase {
     virtual void disconnect() = 0;
 
     // Execute query without transaction (auto-commit)
-    virtual IResult exec(const std::string& sql) = 0;
+    virtual std::unique_ptr<IResult> exec(const std::string& sql) = 0;
     // Execute parameterized query without transaction
-    virtual IResult exec_params(const std::string& sql,
-                                const std::vector<std::any>& args) = 0;
+    virtual std::unique_ptr<IResult> exec_params(
+        const std::string& sql, const std::vector<std::any>& args) = 0;
 };

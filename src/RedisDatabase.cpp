@@ -24,17 +24,17 @@ void RedisDatabase::disconnect() {
     }
 }
 
-IResult RedisDatabase::exec(const std::string& sql) {
+std::unique_ptr<IResult> RedisDatabase::exec(const std::string& sql) {
     if (!_connected) {
         throw std::runtime_error("[Redis] Database not connected");
     }
     std::cout << "[Redis] Executing query: " << sql << "\n";
     // Simulate query execution
     std::cout << "[Redis] Query executed successfully\n";
-    return IResult{};
+    return nullptr;
 }
 
-IResult RedisDatabase::exec_params(const std::string& sql,
-                                   const std::vector<std::any>& args) {
-    return IResult();
+std::unique_ptr<IResult> RedisDatabase::exec_params(
+    const std::string& sql, const std::vector<std::any>& args) {
+    return nullptr;
 }
