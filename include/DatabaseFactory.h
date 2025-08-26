@@ -10,7 +10,7 @@
 #include "IDatabase.h"
 
 // Enhanced Database Factory with registration mechanism
-class DatabaseFactory {
+class DatabaseFactory final {
    private:
     using Creator =
         std::function<std::unique_ptr<IDatabase>(const DatabaseConfig&)>;
