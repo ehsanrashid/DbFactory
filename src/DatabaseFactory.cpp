@@ -9,12 +9,12 @@
 
 // Static member definition
 std::unordered_map<std::string, DatabaseFactory::Creator>
-    DatabaseFactory::creators;
+    DatabaseFactory::_creators;
 
 // Register a database type with its creator function
-void DatabaseFactory::register_database(const std::string& type,
+void DatabaseFactory::register_database(const std::string& dbType,
                                         Creator creator) noexcept {
-    creators[type] = creator;
+    _creators[dbType] = creator;
 }
 
 // Initialize factory with default database types
@@ -64,24 +64,25 @@ void DatabaseFactory::initialize() noexcept {
 }
 
 // Check if a database type is supported
-bool DatabaseFactory::supported(const std::string& type) noexcept {
-    return creators.find(type) != creators.end();
+bool DatabaseFactory::supported(const std::string& dbType) noexcept {
+    return _creators.find(dbType) != _creators.end();
 }
 
 // Get list of available database types
 std::vector<std::string> DatabaseFactory::available_types() noexcept {
-    std::vector<std::string> types;
-    for (const auto& pair : creators) types.push_back(pair.first);
+    std::vector<std::string> dbTypes;
+    for (const auto& creator : _creators) dbTypes.push_back(creator.first);
 
-    return types;
+    return dbTypes;
 }
 
 // Create database instance
 std::unique_ptr<IDatabase> DatabaseFactory::create(
-    const std::string& type, const DatabaseConfig& config) {
-    auto itr = creators.find(type);
-    if (itr == creators.end())
-        throw std::runtime_error("Unknown database type: " + type);
+    const std::string& dbType, const DatabaseConfig& config) {
+    auto itr = _creators.find(dbType);
+
+    if (itr == _creators.end())
+        throw std::runtime_error("Unknown database type: " + dbType);
 
     return itr->second(config);
 }
