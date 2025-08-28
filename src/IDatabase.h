@@ -7,7 +7,7 @@
 
 class IResult {
    public:
-    virtual ~IResult() = default;
+    virtual ~IResult() noexcept = default;
 };
 
 // Database interface

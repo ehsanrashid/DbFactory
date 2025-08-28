@@ -52,6 +52,8 @@ class PostgreResult : public IResult {
    public:
     explicit PostgreResult(const pqxx::result& result);
 
+    ~PostgreResult() noexcept = default;
+
     // Iterator support
     class iterator {
        public:

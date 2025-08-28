@@ -171,7 +171,8 @@ PostgreResult PostgreTransaction::exec_params(
         throw DatabaseError("Argument count mismatch");
 
     try {
-        return PostgreResult(_txn->exec_params(sql, std::any_cast<Args>(args[0])...));
+        return PostgreResult(
+            _txn->exec_params(sql, std::any_cast<Args>(args[0])...));
     } catch (const pqxx::sql_error& e) {
         throw QueryError(e.what());
     } catch (const std::exception& e) {
