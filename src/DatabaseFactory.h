@@ -42,5 +42,5 @@ class DatabaseFactory final {
     // Create database instance
     static std::unique_ptr<IDatabase> create(
         const std::string& dbType,
-        const DatabaseConfig& config = DatabaseConfig{});
+        const DatabaseConfig& dbConfig = DatabaseConfig{});
 };

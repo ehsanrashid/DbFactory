@@ -21,45 +21,45 @@ void DatabaseFactory::register_database(const std::string& dbType,
 void DatabaseFactory::initialize() noexcept {
     register_database(
         "mysql",
-        [](const DatabaseConfig& config) -> std::unique_ptr<IDatabase> {
+        [](const DatabaseConfig& dbConfig) -> std::unique_ptr<IDatabase> {
             return std::make_unique<MySQLDatabase>(
-                config.host.empty() ? "localhost" : config.host,
-                config.port == 0 ? 3306 : config.port);
+                dbConfig.host.empty() ? "localhost" : dbConfig.host,
+                dbConfig.port == 0 ? 3306 : dbConfig.port);
         });
 
     register_database(
         "postgresql",
-        [](const DatabaseConfig& config) -> std::unique_ptr<IDatabase> {
+        [](const DatabaseConfig& dbConfig) -> std::unique_ptr<IDatabase> {
             return std::make_unique<PostgreDatabase>(
-                config.host.empty() ? "localhost" : config.host,
-                config.port == 0 ? 5432 : config.port,
-                config.database.empty() ? "postgres" : config.database,
-                config.username, config.password);
+                dbConfig.host.empty() ? "localhost" : dbConfig.host,
+                dbConfig.port == 0 ? 5432 : dbConfig.port,
+                dbConfig.database.empty() ? "postgres" : dbConfig.database,
+                dbConfig.username, dbConfig.password);
         });
 
     register_database(
         "postgres",
-        [](const DatabaseConfig& config) -> std::unique_ptr<IDatabase> {
+        [](const DatabaseConfig& dbConfig) -> std::unique_ptr<IDatabase> {
             return std::make_unique<PostgreDatabase>(
-                config.host.empty() ? "localhost" : config.host,
-                config.port == 0 ? 5432 : config.port,
-                config.database.empty() ? "postgres" : config.database,
-                config.username, config.password);
+                dbConfig.host.empty() ? "localhost" : dbConfig.host,
+                dbConfig.port == 0 ? 5432 : dbConfig.port,
+                dbConfig.database.empty() ? "postgres" : dbConfig.database,
+                dbConfig.username, dbConfig.password);
         });
 
     register_database(
         "sqlite",
-        [](const DatabaseConfig& config) -> std::unique_ptr<IDatabase> {
+        [](const DatabaseConfig& dbConfig) -> std::unique_ptr<IDatabase> {
             return std::make_unique<SQLiteDatabase>(
-                config.filepath.empty() ? ":memory:" : config.filepath);
+                dbConfig.filepath.empty() ? ":memory:" : dbConfig.filepath);
         });
 
     register_database(
         "redis",
-        [](const DatabaseConfig& config) -> std::unique_ptr<IDatabase> {
+        [](const DatabaseConfig& dbConfig) -> std::unique_ptr<IDatabase> {
             return std::make_unique<RedisDatabase>(
-                config.host.empty() ? "localhost" : config.host,
-                config.port == 0 ? 6379 : config.port);
+                dbConfig.host.empty() ? "localhost" : dbConfig.host,
+                dbConfig.port == 0 ? 6379 : dbConfig.port);
         });
 }
 
@@ -78,11 +78,11 @@ std::vector<std::string> DatabaseFactory::available_types() noexcept {
 
 // Create database instance
 std::unique_ptr<IDatabase> DatabaseFactory::create(
-    const std::string& dbType, const DatabaseConfig& config) {
+    const std::string& dbType, const DatabaseConfig& dbConfig) {
     auto itr = _creators.find(dbType);
 
     if (itr == _creators.end())
         throw std::runtime_error("Unknown database type: " + dbType);
 
-    return itr->second(config);
+    return itr->second(dbConfig);
 }
