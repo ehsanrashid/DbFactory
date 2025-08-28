@@ -15,7 +15,7 @@ pkg_check_modules(PQXX REQUIRED libpqxx)
 # Collect source files
 file(GLOB SOURCES "src/*.cpp")
 # Collect header files
-file(GLOB HEADERS "include/*.h")
+file(GLOB HEADERS "src/*.h")
 
 # Create a single executable
 #add_executable(${PROJECT_NAME} ${SOURCES})
@@ -23,13 +23,12 @@ file(GLOB HEADERS "include/*.h")
 add_library(${PROJECT_NAME} ${SOURCES})
 
 # Include headers
-target_include_directories(${PROJECT_NAME} PRIVATE 
-    ${CMAKE_SOURCE_DIR}/include
+target_include_directories(${PROJECT_NAME} PRIVATE
     ${PQXX_INCLUDE_DIRS}
 )
 
 # Link libraries
-target_link_libraries(${PROJECT_NAME} PRIVATE 
+target_link_libraries(${PROJECT_NAME} PRIVATE
     ${PQXX_LIBRARIES}
 )
 
