@@ -17,8 +17,9 @@ file(GLOB SOURCES "src/*.cpp")
 # Collect header files
 file(GLOB HEADERS "include/*.h")
 
-# Create a library
+# Create a single executable
 #add_executable(${PROJECT_NAME} ${SOURCES})
+# Create a library
 add_library(${PROJECT_NAME} ${SOURCES})
 
 # Include headers
