@@ -13,13 +13,13 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(PQXX REQUIRED libpqxx)
 
 # Collect source files
-file(GLOB SOURCE_FILES "src/*.cpp")
+file(GLOB SOURCES "src/*.cpp")
 # Collect header files
 file(GLOB HEADERS "include/*.h")
 
 # Create a library
-#add_executable(${PROJECT_NAME} ${SOURCE_FILES})
-add_library(${PROJECT_NAME} ${SOURCE_FILES})
+#add_executable(${PROJECT_NAME} ${SOURCES})
+add_library(${PROJECT_NAME} ${SOURCES})
 
 # Include headers
 target_include_directories(${PROJECT_NAME} PRIVATE 
