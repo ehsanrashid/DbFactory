@@ -3,6 +3,11 @@ build/
 cmake-build-debug/
 cmake-build-release/
 
+# Install directories
+install/
+install_/
+_install/
+
 # Compiled Object files
 *.o
 *.obj
@@ -13,8 +18,8 @@ cmake-build-release/
 *.dll
 
 # Compiled Static libraries
-#*.a
-#*.lib
+*.a
+*.lib
 
 # Executables
 *.exe
