@@ -1,9 +1,17 @@
 cmake_minimum_required(VERSION 3.16)
-project(DbFactory VERSION 1.0.0 LANGUAGES CXX)
 
+# Project setup
+set(PROJECT_NAME DbFactory)
+project(${PROJECT_NAME} VERSION 1.0.0 LANGUAGES CXX)
+
+# C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Default build type
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
 
 # Find PostgreSQL first (required by libpqxx)
 find_package(PostgreSQL REQUIRED)
