@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <string>
 
-// Exception classes
+// Error classes
 class DatabaseError : public std::runtime_error {
    public:
     explicit DatabaseError(const std::string& msg);
